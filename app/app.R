@@ -10,7 +10,8 @@ ui <- navbarPage(
 
 
 server <- function(input, output) {
-  source(file.path("server", "tab_data.R"), local=T, chdir=T)$value
+  source(file.path("server", "data.R"), local=T, chdir=T)$value
+  source(file.path("server", "analysis.R"), local=T, chdir=T)$value
 }
 
 
