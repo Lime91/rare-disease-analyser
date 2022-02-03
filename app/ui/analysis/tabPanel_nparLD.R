@@ -9,6 +9,7 @@ tabPanel(
       offset=3,
       
       wellPanel(
+        
         fluidRow(
           
           column(
@@ -24,6 +25,26 @@ tabPanel(
           column(
             width=4,
             uiOutput("nparLD_time_factor")
+          )
+        ),
+        
+        tags$hr(),
+        
+        fluidRow(
+          
+          column(
+            width=4,
+            offset=8,
+            tags$div(
+              shinyjs::disabled(
+                actionButton(
+                  "nparLD_action",
+                  "Go!",
+                  class="btn btn-primary"  # bootstrap
+                )
+              ),
+              style="float:right"
+            )
           )
         )
       )

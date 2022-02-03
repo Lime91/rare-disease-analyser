@@ -14,7 +14,7 @@ ui <- tagList(  # needed for useShinyjs() to be present in the top level ui
 )
 
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   source(file.path("server", "data.R"), local=T, chdir=T)$value
   source(file.path("server", "analysis.R"), local=T, chdir=T)$value
 }

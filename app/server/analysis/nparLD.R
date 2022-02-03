@@ -1,4 +1,10 @@
 
+disabled <- reactive(
+  {
+    is.null(dataset())
+  }
+)
+
 selectize_outcome <- function(choices) {
   selectizeInput(
     "nparLD_outcome_var",
@@ -25,7 +31,7 @@ selectize_time <- function(choices) {
 
 output$nparLD_outcome <- renderUI(
   {
-    if (is.null(dataset()))
+    if (disabled())
       shinyjs::disabled(selectize_outcome("upload datset!"))
     else
       selectize_outcome(colnames(dataset()))
@@ -34,7 +40,7 @@ output$nparLD_outcome <- renderUI(
 
 output$nparLD_group_factor <- renderUI(
   {
-    if (is.null(dataset()))
+    if (disabled())
       shinyjs::disabled(selectize_group(""))
     else
       selectize_group(
@@ -48,7 +54,7 @@ output$nparLD_group_factor <- renderUI(
  
 output$nparLD_time_factor <- renderUI(
   {
-    if (is.null(dataset()))
+    if (disabled())
       shinyjs::disabled(selectize_time(""))
     else
       selectize_time(
@@ -57,5 +63,19 @@ output$nparLD_time_factor <- renderUI(
           c(input$nparLD_outcome_var, input$nparLD_group_var)
         )
       )
+  }
+)
+
+observe(
+  {
+    if (!disabled())
+      shinyjs::enable("nparLD_action")
+  }
+)
+  
+observeEvent(
+  input$nparLD_action,
+  {
+    cat("action registered!\n")
   }
 )
