@@ -1,5 +1,5 @@
 
-dataset <- reactive(
+data <- reactive(
   {
     if (is.null(input$file)) {
       return(NULL)
@@ -20,6 +20,6 @@ dataset <- reactive(
 
 output$dataset <- DT::renderDataTable(
   {
-    dataset()
+    data()
   }
 )

@@ -13,18 +13,23 @@ tabPanel(
         fluidRow(
           
           column(
-            width=4,
+            width=3,
             uiOutput("nparLD_outcome")
           ),
           
           column(
-            width=4,
+            width=3,
             uiOutput("nparLD_group_factor")
           ),
           
           column(
-            width=4,
+            width=3,
             uiOutput("nparLD_time_factor")
+          ),
+          
+          column(
+            width=3,
+            uiOutput("nparLD_subject")
           )
         ),
         
