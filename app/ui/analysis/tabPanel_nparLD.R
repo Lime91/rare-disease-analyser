@@ -56,8 +56,8 @@ tabPanel(
     column(
       width=6,
       offset=3,
-      plotOutput(
-        "nparLD_rte_plot"
+      uiOutput(
+        "nparLD_rte"
       )
     )
   )

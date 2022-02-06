@@ -135,12 +135,17 @@ observeEvent(
   }
 )
 
-output$nparLD_rte_plot <- renderPlot(
+output$nparLD_rte <- renderUI(
   {
     if (is.null(nparLD_out()))
-      plot(1) 
-    else
-      nparLD::plot.nparLD(nparLD_out())
+      tags$div(id="nparLD_rte_placeholder")  # is this necessary?
+    else {
+      output$nparLD_rte_plot <- renderPlot(
+        {
+          nparLD::plot.nparLD(nparLD_out())
+        }
+      )
+      plotOutput("nparLD_rte_plot")
+    }
   }
 )
-
