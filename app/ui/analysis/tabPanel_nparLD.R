@@ -3,15 +3,12 @@ tabPanel(
   "nparLD",
   
   fluidRow(
-    
     column(
       width=6,  # outer column to fit wellPanel and inner row/cols
       offset=3,
       
       wellPanel(
-        
         fluidRow(
-          
           column(
             width=3,
             uiOutput("nparLD_outcome")
@@ -36,7 +33,6 @@ tabPanel(
         tags$hr(),
         
         fluidRow(
-          
           column(
             width=4,
             offset=8,
@@ -52,6 +48,16 @@ tabPanel(
             )
           )
         )
+      )
+    )
+  ),
+  
+  fluidRow(
+    column(
+      width=6,
+      offset=3,
+      plotOutput(
+        "nparLD_rte_plot"
       )
     )
   )

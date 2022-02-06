@@ -103,18 +103,24 @@ observe(
 observeEvent(
   input$nparLD_action,
   {
-    cat("action registered!\n")
-    nparLD_out <- tryCatch(
+    out <- tryCatch(
       {
-        df <- data()
-        nparLD::f1.ld.f1(
-          df[[input$nparLD_outcome_var]],
-          df[[input$nparLD_time_var]],
-          df[[input$nparLD_group_var]],
-          df[[input$nparLD_subject_var]],
-          time.name=input$nparLD_time_var,
-          group.name=input$nparLD_group_var,
-          plot.RTE=FALSE,
+        form <- as.formula(
+          paste(
+            input$nparLD_outcome_var,
+            paste(
+              input$nparLD_group_var,
+              input$nparLD_time_var,
+              sep="*"
+            ),
+            sep="~"
+          )
+        )
+        nparLD_out <- nparLD::nparLD(
+          form,
+          data(),
+          input$nparLD_subject_var,
+          description=FALSE,
           order.warning=FALSE
         )
       },
@@ -125,5 +131,16 @@ observeEvent(
         return(NULL)
       }
     )
+    nparLD_out(out)
   }
 )
+
+output$nparLD_rte_plot <- renderPlot(
+  {
+    if (is.null(nparLD_out()))
+      plot(1) 
+    else
+      nparLD::plot.nparLD(nparLD_out())
+  }
+)
+
