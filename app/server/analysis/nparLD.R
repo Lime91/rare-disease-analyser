@@ -42,7 +42,7 @@ selectize_subject <- function(choices) {
 output$nparLD_outcome <- renderUI(
   {
     if (disabled())
-      shinyjs::disabled(selectize_outcome("upload datset!"))
+      shinyjs::disabled(selectize_outcome("upload dataset!"))
     else
       selectize_outcome(colnames(data()))
   }

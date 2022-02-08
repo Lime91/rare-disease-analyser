@@ -7,7 +7,7 @@ data <- reactive(
       return(
         read.delim(
           input$file$datapath,
-          header=T,
+          header=TRUE,
           sep=input$data_sep,
           dec=input$data_dec
         )
@@ -19,7 +19,7 @@ data <- reactive(
 
 
 output$dataset <- DT::renderDataTable(
-  {
+  { 
     data()
   }
 )
