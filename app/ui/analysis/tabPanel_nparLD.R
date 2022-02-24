@@ -34,8 +34,27 @@ tabPanel(
         
         fluidRow(
           column(
-            width=4,
-            offset=8,
+            width=3,
+            tags$div(
+              shinyjs::disabled(
+                radioButtons(
+                  "nparLD_alpha",
+                  "Alpha",
+                  choices=list(
+                    "1%"=0.01,
+                    "5%"=0.05,
+                    "10%"=0.1
+                  ),
+                  selected=0.05,
+                  inline=TRUE
+                )
+              )
+            )
+          ),
+          
+          column(
+            width=3,
+            offset=6,
             tags$div(
               shinyjs::disabled(
                 actionButton(
@@ -55,9 +74,19 @@ tabPanel(
   fluidRow(
     column(
       width=6,
-      offset=3,
+      offset=2,
       uiOutput(
         "nparLD_rte"
+      )
+    ),
+    
+    column(
+      width=2,
+      tags$div(
+        uiOutput(
+          "nparLD_table"
+        ),
+        style="float:right"
       )
     )
   )

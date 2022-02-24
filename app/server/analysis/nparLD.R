@@ -95,8 +95,10 @@ output$nparLD_subject <- renderUI(
 
 observe(
   {
-    if (!disabled())
+    if (!disabled()) {
       shinyjs::enable("nparLD_action")
+      shinyjs::enable("nparLD_alpha")
+    }
   }
 )
   
@@ -116,12 +118,13 @@ observeEvent(
             sep="~"
           )
         )
-        nparLD_out <- nparLD::nparLD(
+        nparLD::nparLD(
           form,
           data(),
           input$nparLD_subject_var,
           description=FALSE,
-          order.warning=FALSE
+          order.warning=FALSE,
+          alpha=input$nparLD_alpha
         )
       },
       error=function(e) {
@@ -146,6 +149,33 @@ output$nparLD_rte <- renderUI(
         }
       )
       plotOutput("nparLD_rte_plot")
+    }
+  }
+)
+
+output$nparLD_table <- renderUI(
+  {
+    if (is.null(nparLD_out()))
+      tags$div(id="nparLD_table_placeholder")  # is this necessary?
+    else {
+      output$nparLD_table_content <- renderTable(
+        {
+          df <- data.frame(
+            nparLD_out()$ANOVA.test
+          )
+          df$df <- as.integer(df$df)  # cast degrees of freedom to integer
+          return(df)
+        },
+        rownames=TRUE,
+        colnames=TRUE,
+        align="r",
+        digits=4
+      )
+      tags$div(
+        tags$h3("ANOVA-Type Statistic"),
+        tags$br(),
+        tableOutput("nparLD_table_content")
+      )
     }
   }
 )
