@@ -34,7 +34,7 @@ tabPanel(
         
         fluidRow(
           column(
-            width=3,
+            width=4,
             tags$div(
               shinyjs::disabled(
                 radioButtons(
@@ -53,7 +53,7 @@ tabPanel(
           ),
           
           column(
-            width=3,
+            width=2,
             offset=6,
             tags$div(
               shinyjs::disabled(
@@ -63,7 +63,7 @@ tabPanel(
                   class="btn btn-primary"  # bootstrap
                 )
               ),
-              style="float:right"
+              style="float:right;"
             )
           )
         )
@@ -73,7 +73,7 @@ tabPanel(
   
   fluidRow(
     column(
-      width=6,
+      width=5,
       offset=2,
       uiOutput(
         "nparLD_rte"
@@ -81,12 +81,12 @@ tabPanel(
     ),
     
     column(
-      width=2,
+      width=3,
       tags$div(
         uiOutput(
           "nparLD_table"
         ),
-        style="float:right"
+        style="float:right;"
       )
     )
   )

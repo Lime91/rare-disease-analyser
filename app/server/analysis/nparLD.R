@@ -156,7 +156,7 @@ output$nparLD_rte <- renderUI(
 output$nparLD_table <- renderUI(
   {
     if (is.null(nparLD_out()))
-      tags$div(id="nparLD_table_placeholder")  # is this necessary?
+      tags$div(id="nparLD_table_placeholder")
     else {
       output$nparLD_table_content <- renderTable(
         {
@@ -172,7 +172,11 @@ output$nparLD_table <- renderUI(
         digits=4
       )
       tags$div(
-        tags$h3("ANOVA-Type Statistic"),
+        tags$br(),
+        tags$h4(
+          "ANOVA-Type Statistic",
+          style="font-weight:bold;"
+        ),
         tags$br(),
         tableOutput("nparLD_table_content")
       )
