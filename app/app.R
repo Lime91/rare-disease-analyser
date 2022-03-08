@@ -21,8 +21,12 @@ server <- function(input, output, session) {
 }
 
 
+# options set as environment variables (e.g., in Dockerfile)
 app_options <- list(
-  port=9999
+  port=as.integer(
+    Sys.getenv("LISTENING_PORT", unset="3838")
+  ),
+  host=Sys.getenv("LISTENING_ADDRESS", unset="127.0.0.1")
 )
 
 
