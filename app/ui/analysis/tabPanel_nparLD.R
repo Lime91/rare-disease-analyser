@@ -1,4 +1,31 @@
 
+nparLDOutput <- function(id) {
+  ns <- NS(id)
+  tagList(
+
+    fluidRow(
+      column(
+        width=5,
+        offset=2,
+        uiOutput(
+          ns("rte")
+        )
+      ),
+      
+      column(
+        width=3,
+        tags$div(
+          uiOutput(
+            ns("table")
+          ),
+          style="float:right;"
+        )
+      )
+    )
+  )
+}
+
+
 tabPanel(
   "nparLD",
   
@@ -71,23 +98,5 @@ tabPanel(
     )
   ),
   
-  fluidRow(
-    column(
-      width=5,
-      offset=2,
-      uiOutput(
-        "nparLD_rte"
-      )
-    ),
-    
-    column(
-      width=3,
-      tags$div(
-        uiOutput(
-          "nparLD_table"
-        ),
-        style="float:right;"
-      )
-    )
-  )
+  nparLDOutput("nparLD")
 )

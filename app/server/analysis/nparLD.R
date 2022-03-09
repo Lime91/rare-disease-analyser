@@ -138,48 +138,61 @@ observeEvent(
   }
 )
 
-output$nparLD_rte <- renderUI(
-  {
-    if (is.null(nparLD_out()))
-      tags$div(id="nparLD_rte_placeholder")  # is this necessary?
-    else {
-      output$nparLD_rte_plot <- renderPlot(
+nparLDServer <- function(id, nparLD_out) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+
+      ns <- session$ns
+
+      output$rte <- renderUI(
         {
-          nparLD::plot.nparLD(nparLD_out())
+          if (is.null(nparLD_out()))
+            tags$div(id="rte_placeholder")  # is this necessary?
+          else {
+            output$rte_plot <- renderPlot(
+              {
+                nparLD::plot.nparLD(nparLD_out())
+              }
+            )
+            plotOutput(ns("rte_plot"))
+          }
         }
       )
-      plotOutput("nparLD_rte_plot")
-    }
-  }
-)
 
-output$nparLD_table <- renderUI(
-  {
-    if (is.null(nparLD_out()))
-      tags$div(id="nparLD_table_placeholder")
-    else {
-      output$nparLD_table_content <- renderTable(
+      output$table <- renderUI(
         {
-          df <- data.frame(
-            nparLD_out()$ANOVA.test
-          )
-          df$df <- as.integer(df$df)  # cast degrees of freedom to integer
-          return(df)
-        },
-        rownames=TRUE,
-        colnames=TRUE,
-        align="r",
-        digits=4
-      )
-      tags$div(
-        tags$br(),
-        tags$h4(
-          "ANOVA-Type Statistic",
-          style="font-weight:bold;"
-        ),
-        tags$br(),
-        tableOutput("nparLD_table_content")
+          if (is.null(nparLD_out()))
+            tags$div(id="table_placeholder")
+          else {
+            output$table_content <- renderTable(
+              {
+                df <- data.frame(
+                  nparLD_out()$ANOVA.test
+                )
+                df$df <- as.integer(df$df)  # cast degrees of freedom to integer
+                return(df)
+              },
+              rownames=TRUE,
+              colnames=TRUE,
+              align="r",
+              digits=4
+            )
+            tags$div(
+              tags$br(),
+              tags$h4(
+                "ANOVA-Type Statistic",
+                style="font-weight:bold;"
+              ),
+              tags$br(),
+              tableOutput(ns("table_content"))
+            )
+          }
+        }
       )
     }
-  }
-)
+  )
+}
+
+nparLDServer("nparLD", nparLD_out)
+
