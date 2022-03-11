@@ -17,7 +17,7 @@ RUN R -e \
         ) \
     )'
 
-# switch to non-root user
+# switch to non-root user (non-daemon users usually start at 1000)
 ARG USERNAME=shiny-user
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -35,4 +35,4 @@ WORKDIR /home/$USERNAME/app
 ENV LISTENING_ADDRESS "0.0.0.0"
 ENV LISTENING_PORT "3838"
 
-CMD ["Rscript",  "app.R"]
+CMD ["R", "-e", "shiny::runApp('./')"]

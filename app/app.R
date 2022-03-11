@@ -36,7 +36,5 @@ app <- shinyApp(
   options=app_options
 )
 
-shiny::runApp(
-  app
-)
+
 
