@@ -4,7 +4,9 @@ FROM rocker/r-ver:4.1.2
 
 # install system dependencies
 RUN apt-get update && \
-    apt-get install -y zlib1g-dev
+    apt-get install -y \
+        zlib1g-dev \
+        libxt6
 
 # install R packages
 RUN R -e \
