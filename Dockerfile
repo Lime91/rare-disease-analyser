@@ -8,16 +8,15 @@ RUN apt-get update && \
         zlib1g-dev \
         libxt6
 
-# install R packages
-RUN R -e \
-    'install.packages( \
-        c( \
-            "shiny", \
-            "shinyjs", \
-            "DT", \
-            "nparLD" \
-        ) \
-    )'
+# install R devtools in order to install specific package versions later
+RUN R -e 'install.packages("devtools")'
+
+# install packages
+RUN R -e 'library(devtools); \
+    install_version("shiny", "1.7.1"); \
+    install_version("shinyjs", "2.1.0"); \
+    install_version("DT", "0.21"); \
+    install_version("nparLD", "2.1");'
 
 # switch to non-root user (non-daemon users usually start at 1000)
 ARG USERNAME=shiny-user
