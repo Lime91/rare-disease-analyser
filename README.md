@@ -37,6 +37,6 @@ Note: depending on your system, you might need to install some additional depend
 
 If everything went fine you are now ready to go. Open a terminal, navigate to the repo root directory, and type:
 
-`R -e 'shiny::runApp("./")'`
+`R -e 'shiny::runApp("./app")'`
 
 This starts the shiny webserver, which is listening (as displayed) at `localhost` on port `3838`.
