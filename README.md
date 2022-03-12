@@ -28,10 +28,10 @@ Type `install.packages("devtools")`. This enables one to install specific packag
 
 Type `library(devtools)` to attach the namespace of the previously installed package. You can now directly call the `install_version` function. Do this for the following packages and versions:
 
-`install_version("shiny", "1.7.1")`
-`install_version("shinyjs", "2.1.0")`
-`install_version("DT", "0.21")`
-`install_version("nparLD", "2.1")`
+- `install_version("shiny", "1.7.1")`
+- `install_version("shinyjs", "2.1.0")`
+- `install_version("DT", "0.21")`
+- `install_version("nparLD", "2.1")`
 
 Note: depending on your system, you might need to install some additional dependencies. Watch out for error messages when installing the above packages.
 
