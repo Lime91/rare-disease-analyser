@@ -1,13 +1,23 @@
 
-disabled <- reactive(
-  {
-    is.null(data())
+sort_choices <- function(choices, values) {
+  matches <- integer()
+  for (val in values) {
+    matches <- c(
+      matches,
+      grep(val, tolower(choices), fixed=T, value=F)
+    )
   }
-)
+  if (length(matches) > 0)
+    choices <- c(choices[matches], choices[-matches])
+  return(choices)
+}
 
-nparLD_out <- reactiveVal(NULL)
 
 selectize_outcome <- function(choices) {
+  choices <- sort_choices(
+    choices,
+    c("value", "count", "outcome")
+  )
   selectizeInput(
     "nparLD_outcome_var",
     label="Outcome",
@@ -16,6 +26,7 @@ selectize_outcome <- function(choices) {
 }
 
 selectize_group <- function(choices) {
+  choices <- sort_choices(choices, "group")
   selectizeInput(
     "nparLD_group_var",
     label="Group Factor",
@@ -24,6 +35,7 @@ selectize_group <- function(choices) {
 }
 
 selectize_time <- function(choices) {
+  choices <- sort_choices(choices, "time")
   selectizeInput(
     "nparLD_time_var",
     label="Time Factor",
@@ -32,12 +44,23 @@ selectize_time <- function(choices) {
 }
 
 selectize_subject <- function(choices) {
+  choices <- sort_choices(choices, "id")
   selectizeInput(
     "nparLD_subject_var",
     label="Subject",
     choices=choices
   )
 }
+
+
+disabled <- reactive(
+  {
+    is.null(data())
+  }
+)
+
+nparLD_out <- reactiveVal(NULL)
+
 
 output$nparLD_outcome <- renderUI(
   {
