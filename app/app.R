@@ -1,4 +1,8 @@
 
+options(
+  shiny.autoreload=TRUE
+)
+
 library(shiny)
 # library(DT)
 # library(shinyjs)
@@ -35,6 +39,3 @@ app <- shinyApp(
   server=server,
   options=app_options
 )
-
-
-

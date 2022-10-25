@@ -13,155 +13,146 @@ sort_choices <- function(choices, values) {
 }
 
 
-selectize_outcome <- function(choices) {
-  choices <- sort_choices(
-    choices,
-    c("value", "count", "outcome")
-  )
-  selectizeInput(
-    "nparLD_outcome_var",
-    label="Outcome",
-    choices=choices
-  )
-}
-
-selectize_group <- function(choices) {
-  choices <- sort_choices(choices, "group")
-  selectizeInput(
-    "nparLD_group_var",
-    label="Group Factor",
-    choices=choices
-  )
-}
-
-selectize_time <- function(choices) {
-  choices <- sort_choices(choices, "time")
-  selectizeInput(
-    "nparLD_time_var",
-    label="Time Factor",
-    choices=choices
-  )
-}
-
-selectize_subject <- function(choices) {
-  choices <- sort_choices(choices, "id")
-  selectizeInput(
-    "nparLD_subject_var",
-    label="Subject",
-    choices=choices
-  )
+provide_selectize <- function(
+  tag_id, label, choices, prioritzed_terms="") {
+    choices <- sort_choices(choices, prioritzed_terms)
+    selectizeInput(tag_id, label=label, choices=choices)
 }
 
 
-disabled <- reactive(
-  {
-    is.null(data())
-  }
-)
+nparLDInputServer <- function(id, inputs_disabled) {
+  moduleServer(
+    id,
+    function(input, output, session) {
 
-nparLD_out <- reactiveVal(NULL)
+      ns <- session$ns
 
-
-output$nparLD_outcome <- renderUI(
-  {
-    if (disabled())
-      shinyjs::disabled(selectize_outcome("upload dataset!"))
-    else
-      selectize_outcome(colnames(data()))
-  }
-)
-
-output$nparLD_group_factor <- renderUI(
-  {
-    if (disabled())
-      shinyjs::disabled(selectize_group(""))
-    else
-      selectize_group(
-        setdiff(
-          colnames(data()),
-          input$nparLD_outcome_var
-        )
+      observe(
+        {
+          if (!inputs_disabled()) {
+            shinyjs::enable(ns("action"))
+            shinyjs::enable(ns("alpha"))
+          }
+        }
       )
-  }
-)
- 
-output$nparLD_time_factor <- renderUI(
-  {
-    if (disabled())
-      shinyjs::disabled(selectize_time(""))
-    else
-      selectize_time(
-        setdiff(
-          colnames(data()),
-          c(input$nparLD_outcome_var,
-            input$nparLD_group_var)
-        )
-      )
-  }
-)
 
-output$nparLD_subject <- renderUI(
-  {
-    if (disabled())
-      shinyjs::disabled(selectize_subject(""))
-    else
-      selectize_subject(
-        setdiff(
-          colnames(data()),
-          c(input$nparLD_outcome_var,
-            input$nparLD_group_var,
-            input$nparLD_time_var)
-        )
+      output$outcome <- renderUI(
+        { 
+          tag_id <- ns("outcome")
+          label <- "Outcome"
+          if (inputs_disabled())
+            shinyjs::disabled(provide_selectize(
+              tag_id, label, "upload dataset!")
+            )
+          else
+            provide_selectize(
+              tag_id, label, colnames(data()), c("value", "count", "outcome")
+            )
+        }
       )
-  }
-)
 
-observe(
-  {
-    if (!disabled()) {
-      shinyjs::enable("nparLD_action")
-      shinyjs::enable("nparLD_alpha")
+      output$group <- renderUI(
+        {
+          tag_id <- ns("group")
+          label <- "Group Factor"
+          if (inputs_disabled())
+            shinyjs::disabled(provide_selectize(tag_id, label, ""))
+          else
+            provide_selectize(
+              tag_id,
+              label,
+              setdiff(colnames(data()), input$outcome),
+              "group"
+            )
+        }
+      )
+
+      output$time <- renderUI(
+        {
+          tag_id <- ns("time")
+          label <- "Time Factor"
+          if (inputs_disabled())
+            shinyjs::disabled(provide_selectize(tag_id, label, ""))
+          else
+            provide_selectize(
+              tag_id,
+              label,
+              setdiff(colnames(data()), c(input$outcome, input$group)),
+              "time"
+            )
+        }
+      )
+
+      output$subject <- renderUI(
+        {
+          tag_id <- ns("subject")
+          label <- "Subject"
+          if (inputs_disabled())
+            shinyjs::disabled(provide_selectize(tag_id, label, ""))
+          else
+            provide_selectize(
+              tag_id,
+              label,
+              setdiff(
+                colnames(data()),
+                c(input$outcome, input$group, input$time)),
+              c("subject", "id")
+            )
+        }
+      )
     }
-  }
-)
-  
-observeEvent(
-  input$nparLD_action,
-  {
-    out <- tryCatch(
-      {
-        form <- as.formula(
-          paste(
-            input$nparLD_outcome_var,
-            paste(
-              input$nparLD_group_var,
-              input$nparLD_time_var,
-              sep="*"
-            ),
-            sep="~"
-          )
-        )
-        nparLD::nparLD(
-          form,
-          data(),
-          input$nparLD_subject_var,
-          description=FALSE,
-          order.warning=FALSE,
-          alpha=input$nparLD_alpha
-        )
-      },
-      error=function(e) {
-        shinyjs::alert(
-          paste("nparLD error:", e$message)
-        )
-        return(NULL)
-      }
-    )
-    nparLD_out(out)
-  }
-)
+  )
+}
 
-nparLDServer <- function(id, nparLD_out) {
+
+nparLDComputeServer <- function(id) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+
+      ns <- session$ns
+
+      observeEvent(
+        input$action,
+        { 
+          out <- tryCatch(
+            { 
+              form <- as.formula(
+                paste(
+                  input$outcome,
+                  paste(
+                    input$group,
+                    input$time,
+                    sep="*"
+                  ),
+                  sep="~"
+                )
+              )
+              nparLD::nparLD(
+                form,
+                data(),
+                input$subject,
+                description=FALSE,
+                order.warning=FALSE,
+                alpha=input$alpha
+              )
+            },
+            error=function(e) {
+              shinyjs::alert(
+                paste("nparLD error:", e$message)
+              )
+              return(NULL)
+            }
+          )
+          out
+        }
+      )
+    }
+  )
+}
+
+
+nparLDOutputServer <- function(id, nparLD_out) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -178,7 +169,7 @@ nparLDServer <- function(id, nparLD_out) {
                 nparLD::plot.nparLD(nparLD_out())
               }
             )
-            plotOutput(ns("rte_plot"))
+            plotOutput(ns("rte"))
           }
         }
       )
@@ -208,7 +199,7 @@ nparLDServer <- function(id, nparLD_out) {
                 style="font-weight:bold;"
               ),
               tags$br(),
-              tableOutput(ns("table_content"))
+              tableOutput(ns("table"))
             )
           }
         }
@@ -217,5 +208,14 @@ nparLDServer <- function(id, nparLD_out) {
   )
 }
 
-nparLDServer("nparLD", nparLD_out)
 
+# invoke server
+inputs_disabled <- reactive(
+  {
+    is.null(data())
+  }
+)
+nparLD_out <- reactiveVal(NULL)
+nparLDInputServer("nparLD", inputs_disabled)
+nparLD_out(nparLDComputeServer("nparLD"))
+nparLDOutputServer("nparLD", nparLD_out)
