@@ -1,6 +1,7 @@
 
 options(
-  shiny.autoreload=TRUE
+  # shiny.autoreload=TRUE,
+  shiny.reactlog=TRUE
 )
 
 library(shiny)

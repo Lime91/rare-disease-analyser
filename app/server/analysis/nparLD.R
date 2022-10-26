@@ -38,7 +38,7 @@ nparLDInputServer <- function(id, inputs_disabled) {
 
       output$outcome <- renderUI(
         { 
-          tag_id <- ns("outcome")
+          tag_id <- ns("outcome_var")
           label <- "Outcome"
           if (inputs_disabled())
             shinyjs::disabled(provide_selectize(
@@ -53,7 +53,7 @@ nparLDInputServer <- function(id, inputs_disabled) {
 
       output$group <- renderUI(
         {
-          tag_id <- ns("group")
+          tag_id <- ns("group_var")
           label <- "Group Factor"
           if (inputs_disabled())
             shinyjs::disabled(provide_selectize(tag_id, label, ""))
@@ -61,7 +61,7 @@ nparLDInputServer <- function(id, inputs_disabled) {
             provide_selectize(
               tag_id,
               label,
-              setdiff(colnames(data()), input$outcome),
+              setdiff(colnames(data()), input$outcome_var),
               "group"
             )
         }
@@ -69,7 +69,7 @@ nparLDInputServer <- function(id, inputs_disabled) {
 
       output$time <- renderUI(
         {
-          tag_id <- ns("time")
+          tag_id <- ns("time_var")
           label <- "Time Factor"
           if (inputs_disabled())
             shinyjs::disabled(provide_selectize(tag_id, label, ""))
@@ -77,7 +77,7 @@ nparLDInputServer <- function(id, inputs_disabled) {
             provide_selectize(
               tag_id,
               label,
-              setdiff(colnames(data()), c(input$outcome, input$group)),
+              setdiff(colnames(data()), c(input$outcome_var, input$group_var)),
               "time"
             )
         }
@@ -95,7 +95,7 @@ nparLDInputServer <- function(id, inputs_disabled) {
               label,
               setdiff(
                 colnames(data()),
-                c(input$outcome, input$group, input$time)),
+                c(input$outcome_var, input$group_var, input$time_var)),
               c("subject", "id")
             )
         }
@@ -110,8 +110,6 @@ nparLDComputeServer <- function(id) {
     id,
     function(input, output, session) {
 
-      ns <- session$ns
-
       observeEvent(
         input$action,
         { 
@@ -119,10 +117,10 @@ nparLDComputeServer <- function(id) {
             { 
               form <- as.formula(
                 paste(
-                  input$outcome,
+                  input$outcome_var,
                   paste(
-                    input$group,
-                    input$time,
+                    input$group_var,
+                    input$time_var,
                     sep="*"
                   ),
                   sep="~"
@@ -131,7 +129,7 @@ nparLDComputeServer <- function(id) {
               nparLD::nparLD(
                 form,
                 data(),
-                input$subject,
+                input$subject_var,
                 description=FALSE,
                 order.warning=FALSE,
                 alpha=input$alpha
