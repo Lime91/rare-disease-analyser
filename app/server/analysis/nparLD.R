@@ -1,101 +1,108 @@
 
-disabled <- reactive(
+sort_choices <- function(choices, values) {
+  matches <- integer()
+  for (val in values) {
+    matches <- c(
+      matches,
+      grep(val, tolower(choices), fixed=T, value=F)
+    )
+  }
+  if (length(matches) > 0)
+    choices <- c(choices[matches], choices[-matches])
+  return(choices)
+}
+
+
+provide_selectize <- function(
+  tag_id, label, choices, prioritzed_terms="") {
+    choices <- sort_choices(choices, prioritzed_terms)
+    selectizeInput(tag_id, label=label, choices=choices)
+}
+
+
+inputs_disabled <- reactive(
   {
     is.null(data())
   }
 )
 
+
 nparLD_out <- reactiveVal(NULL)
 
-selectize_outcome <- function(choices) {
-  selectizeInput(
-    "nparLD_outcome_var",
-    label="Outcome",
-    choices=choices
-  )
-}
-
-selectize_group <- function(choices) {
-  selectizeInput(
-    "nparLD_group_var",
-    label="Group Factor",
-    choices=choices
-  )
-}
-
-selectize_time <- function(choices) {
-  selectizeInput(
-    "nparLD_time_var",
-    label="Time Factor",
-    choices=choices
-  )
-}
-
-selectize_subject <- function(choices) {
-  selectizeInput(
-    "nparLD_subject_var",
-    label="Subject",
-    choices=choices
-  )
-}
 
 output$nparLD_outcome <- renderUI(
-  {
-    if (disabled())
-      shinyjs::disabled(selectize_outcome("upload dataset!"))
+  { 
+    tag_id <- "nparLD_outcome_var"
+    label <- "Outcome"
+    if (inputs_disabled())
+      shinyjs::disabled(provide_selectize(
+        tag_id, label, "upload dataset!")
+      )
     else
-      selectize_outcome(colnames(data()))
-  }
-)
-
-output$nparLD_group_factor <- renderUI(
-  {
-    if (disabled())
-      shinyjs::disabled(selectize_group(""))
-    else
-      selectize_group(
-        setdiff(
-          colnames(data()),
-          input$nparLD_outcome_var
-        )
+      provide_selectize(
+        tag_id, label, colnames(data()), c("value", "count", "outcome")
       )
   }
 )
- 
-output$nparLD_time_factor <- renderUI(
+
+output$nparLD_group <- renderUI(
   {
-    if (disabled())
-      shinyjs::disabled(selectize_time(""))
+    tag_id <- "nparLD_group_var"
+    label <- "Group Factor"
+    if (inputs_disabled())
+      shinyjs::disabled(provide_selectize(tag_id, label, ""))
     else
-      selectize_time(
+      provide_selectize(
+        tag_id,
+        label,
+        setdiff(colnames(data()), input$nparLD_outcome_var),
+        "group"
+      )
+  }
+)
+
+output$nparLD_time <- renderUI(
+  {
+    tag_id <- "nparLD_time_var"
+    label <- "Time Factor"
+    if (inputs_disabled())
+      shinyjs::disabled(provide_selectize(tag_id, label, ""))
+    else
+      provide_selectize(
+        tag_id,
+        label,
         setdiff(
           colnames(data()),
-          c(input$nparLD_outcome_var,
-            input$nparLD_group_var)
-        )
+          c(input$nparLD_outcome_var, input$nparLD_group_var)),
+        "time"
       )
   }
 )
 
 output$nparLD_subject <- renderUI(
   {
-    if (disabled())
-      shinyjs::disabled(selectize_subject(""))
+    tag_id <- "nparLD_subject_var"
+    label <- "Subject"
+    if (inputs_disabled())
+      shinyjs::disabled(provide_selectize(tag_id, label, ""))
     else
-      selectize_subject(
+      provide_selectize(
+        tag_id,
+        label,
         setdiff(
           colnames(data()),
-          c(input$nparLD_outcome_var,
+          c(
+            input$nparLD_outcome_var,
             input$nparLD_group_var,
-            input$nparLD_time_var)
-        )
+            input$nparLD_time_var)),
+        c("subject", "id")
       )
   }
 )
 
 observe(
   {
-    if (!disabled()) {
+    if (!inputs_disabled()) {
       shinyjs::enable("nparLD_action")
       shinyjs::enable("nparLD_alpha")
     }

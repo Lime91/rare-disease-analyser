@@ -16,12 +16,12 @@ tabPanel(
           
           column(
             width=3,
-            uiOutput("nparLD_group_factor")
+            uiOutput("nparLD_group")
           ),
           
           column(
             width=3,
-            uiOutput("nparLD_time_factor")
+            uiOutput("nparLD_time")
           ),
           
           column(
