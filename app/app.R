@@ -5,6 +5,10 @@ library(shiny)
 # library(nparLD)
 
 
+options(
+  shiny.autoreload=TRUE
+)
+
 ui <- tagList(  # needed for useShinyjs() to be present in the top level ui
   shinyjs::useShinyjs(),
   navbarPage(
@@ -35,6 +39,3 @@ app <- shinyApp(
   server=server,
   options=app_options
 )
-
-
-

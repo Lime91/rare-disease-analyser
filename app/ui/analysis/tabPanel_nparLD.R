@@ -8,28 +8,53 @@ tabPanel(
       offset=3,
       
       wellPanel(
+        
+        titlePanel("nparLD"),
+        tags$hr(),
+
         fluidRow(
           column(
             width=3,
             uiOutput("nparLD_outcome")
           ),
-          
           column(
             width=3,
             uiOutput("nparLD_group")
           ),
-          
           column(
             width=3,
             uiOutput("nparLD_time")
           ),
-          
           column(
             width=3,
             uiOutput("nparLD_subject")
           )
         ),
+        tags$hr(),
         
+        fluidRow(
+          column(
+            width=4,
+            tags$div(
+              shinyjs::disabled(
+                radioButtons(
+                  "nparLD_study_design",
+                  "Study Design",
+                  choices=list(
+                    "Single Trial Period"=1,
+                    "Cross Over"=2
+                  ),
+                  selected=1,
+                  inline=FALSE
+                )
+              )
+            )
+          ),
+          column(
+            width=4,
+            uiOutput("nparLD_period")
+          )
+        ),
         tags$hr(),
         
         fluidRow(
@@ -51,7 +76,6 @@ tabPanel(
               )
             )
           ),
-          
           column(
             width=2,
             offset=6,
@@ -70,24 +94,12 @@ tabPanel(
       )
     )
   ),
-  
+
   fluidRow(
     column(
-      width=5,
+      width=8,
       offset=2,
-      uiOutput(
-        "nparLD_rte"
-      )
-    ),
-    
-    column(
-      width=3,
-      tags$div(
-        uiOutput(
-          "nparLD_table"
-        ),
-        style="float:right;"
-      )
+      uiOutput("nparLD_out")
     )
   )
 )
