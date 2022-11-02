@@ -1,37 +1,13 @@
 
 tabPanel(
   "nparLD",
-  
   fluidRow(
     column(
       width=6,  # outer column to fit wellPanel and inner row/cols
       offset=3,
-      
       wellPanel(
-        
         titlePanel("nparLD"),
         tags$hr(),
-
-        fluidRow(
-          column(
-            width=3,
-            uiOutput("nparLD_outcome")
-          ),
-          column(
-            width=3,
-            uiOutput("nparLD_group")
-          ),
-          column(
-            width=3,
-            uiOutput("nparLD_time")
-          ),
-          column(
-            width=3,
-            uiOutput("nparLD_subject")
-          )
-        ),
-        tags$hr(),
-        
         fluidRow(
           column(
             width=4,
@@ -56,7 +32,6 @@ tabPanel(
           )
         ),
         tags$hr(),
-        
         fluidRow(
           column(
             width=4,
@@ -94,7 +69,6 @@ tabPanel(
       )
     )
   ),
-
   fluidRow(
     column(
       width=8,

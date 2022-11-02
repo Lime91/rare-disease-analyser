@@ -3,26 +3,6 @@
 #### LIBRARY CODE
 ################################
 
-sort_choices <- function(choices, values) {
-  matches <- integer()
-  for (val in values) {
-    matches <- c(
-      matches,
-      grep(val, tolower(choices), fixed=T, value=F)
-    )
-  }
-  if (length(matches) > 0)
-    choices <- c(choices[matches], choices[-matches])
-  return(choices)
-}
-
-
-provide_selectize <- function(
-  tag_id, label, choices, prioritzed_terms="") {
-    choices <- sort_choices(choices, prioritzed_terms)
-    selectizeInput(tag_id, label=label, choices=choices)
-}
-
 
 render_nparLD_plot <- function(nparLD_output) {
   renderPlot(
@@ -105,10 +85,10 @@ computeNparLD <- function(shiny_input, period_data) {
     {
       form <- as.formula(
         paste(
-          shiny_input$nparLD_outcome_var,
+          shiny_input$outcome_var,
           paste(
-            shiny_input$nparLD_group_var,
-            shiny_input$nparLD_time_var,
+            shiny_input$group_var,
+            shiny_input$time_var,
             sep="*"
           ),
           sep="~"
@@ -117,7 +97,7 @@ computeNparLD <- function(shiny_input, period_data) {
       nparLD::nparLD(
         form,
         period_data,
-        shiny_input$nparLD_subject_var,
+        shiny_input$subject_var,
         description=FALSE,
         order.warning=FALSE,
         alpha=shiny_input$nparLD_alpha
@@ -168,13 +148,6 @@ splitDataset <- function(shiny_input, full_data) {
 ################################
 
 
-inputs_disabled <- reactive(
-  {
-    is.null(data())
-  }
-)
-
-
 nparLD_out <- reactiveValues(
   cross_over=NULL,
   value_1=NULL,
@@ -184,100 +157,29 @@ nparLD_out <- reactiveValues(
 )
 
 
-output$nparLD_outcome <- renderUI(
-  { 
-    tag_id <- "nparLD_outcome_var"
-    label <- "Outcome"
-    if (inputs_disabled())
-      shinyjs::disabled(provide_selectize(
-        tag_id, label, "upload dataset!")
-      )
-    else
-      provide_selectize(
-        tag_id, label, colnames(data()), c("value", "count", "outcome")
-      )
-  }
-)
-
-
-output$nparLD_group <- renderUI(
-  {
-    tag_id <- "nparLD_group_var"
-    label <- "Group Factor"
-    if (inputs_disabled())
-      shinyjs::disabled(provide_selectize(tag_id, label, ""))
-    else
-      provide_selectize(
-        tag_id,
-        label,
-        setdiff(colnames(data()), input$nparLD_outcome_var),
-        "group"
-      )
-  }
-)
-
-
-output$nparLD_time <- renderUI(
-  {
-    tag_id <- "nparLD_time_var"
-    label <- "Time Factor"
-    if (inputs_disabled())
-      shinyjs::disabled(provide_selectize(tag_id, label, ""))
-    else
-      provide_selectize(
-        tag_id,
-        label,
-        setdiff(
-          colnames(data()),
-          c(input$nparLD_outcome_var, input$nparLD_group_var)),
-        "time"
-      )
-  }
-)
-
-
-output$nparLD_subject <- renderUI(
-  {
-    tag_id <- "nparLD_subject_var"
-    label <- "Subject"
-    if (inputs_disabled())
-      shinyjs::disabled(provide_selectize(tag_id, label, ""))
-    else
-      provide_selectize(
-        tag_id,
-        label,
-        setdiff(
-          colnames(data()),
-          c(
-            input$nparLD_outcome_var,
-            input$nparLD_group_var,
-            input$nparLD_time_var)),
-        c("subject", "id")
-      )
-  }
-)
-
-
 output$nparLD_period <- renderUI(
   {
     tag_id <- "nparLD_period_var"
     label <- "Period Variable"
     if (inputs_disabled())
-      shinyjs::disabled(provide_selectize(tag_id, label, ""))
+      shinyjs::disabled(render_selectize(
+        tag_id,
+        label,
+        "upload dataset!"))
     else if (input$nparLD_study_design == 1)
-      shinyjs::disabled(provide_selectize(
+      shinyjs::disabled(render_selectize(
         tag_id, label, "only required in cross over design"))
     else
-      provide_selectize(
+      render_selectize(
         tag_id,
         label,
         setdiff(
           colnames(data()),
           c(
-            input$nparLD_outcome_var,
-            input$nparLD_group_var,
-            input$nparLD_time_var,
-            input$nparLD_subject_var)),
+            input$outcome_var,
+            input$group_var,
+            input$time_var,
+            input$subject_var)),
         c("period")
       )
   }
