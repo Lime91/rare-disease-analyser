@@ -14,48 +14,11 @@ tabPanel(
             tags$div(
               shinyjs::disabled(
                 radioButtons(
-                  "gpc_multi",
-                  "Timepoint Aggregation",
-                  choices=list(
-                    "Univariate"=1,
-                    "Mulitvariate"=2
-                  ),
-                  selected=1,
-                  inline=FALSE
-                )
-              )
-            )
-          ),
-          column(
-            width=4,
-            tags$div(
-              shinyjs::disabled(
-                radioButtons(
-                  "gpc_matching",
-                  "Subject Matching",
-                  choices=list(
-                    "Matched"=1,
-                    "Unmatched"=2
-                  ),
-                  selected=1,
-                  inline=FALSE
-                )
-              )
-            )
-          )
-        ),
-        tags$hr(),
-        fluidRow(
-          column(
-            width=4,
-            tags$div(
-              shinyjs::disabled(
-                radioButtons(
                   "gpc_prio",
                   "Timepoint Prioritization",
                   choices=list(
-                    "Prioritzed"=1,
-                    "Non-Prioritzed"=2
+                    "Non-Prioritzed"=1,
+                    "Prioritzed"=2
                   ),
                   selected=1,
                   inline=FALSE
@@ -103,10 +66,12 @@ tabPanel(
                 )
               )
             )
-          ),
+          )
+        ),
+        fluidRow(
           column(
             width=2,
-            offset=8,
+            offset=10,
             tags$div(
               shinyjs::disabled(
                 actionButton(
@@ -124,8 +89,8 @@ tabPanel(
   ),
   fluidRow(
     column(
-      width=8,
-      offset=2,
+      width=4,
+      offset=4,
       uiOutput("gpc_out")
     )
   )
