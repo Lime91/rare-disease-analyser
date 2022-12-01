@@ -89,8 +89,8 @@ tabPanel(
   ),
   fluidRow(
     column(
-      width=4,
-      offset=4,
+      width=6,
+      offset=3,
       uiOutput("gpc_out")
     )
   )

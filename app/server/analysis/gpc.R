@@ -72,38 +72,60 @@ get_wide_data <- function(shiny_input, long_data) {
 }
 
 
+assemble_summary <- function(raw_summary) {
+  title <- trimws(raw_summary[1])
+  body <- strsplit(raw_summary[8], "- ")[[1]][2]
+  list("title"=title, "body"=body)
+}
+
+
 perform_buyse_test <- function(wide_data, group_var, args) {
   set.seed(1)
-  rep.m <- length(args$endpoint)
+  n <- length(args$endpoint)
 
-  gpc_p <- BuyseTest::BuyseTest(
-    data=wide_data,
-    treatment=group_var,
-    endpoint=args$endpoint,
-    operator=args$operator,
-    type=args$type,
-    hierarchical=args$hierarchical,
-    method.inference="permutation",
-    n.resampling = 1e4
+  invisible(capture.output(
+    {
+      gpc_p <- BuyseTest::BuyseTest(
+        data=wide_data,
+        treatment=group_var,
+        endpoint=args$endpoint,
+        operator=args$operator,
+        type=args$type,
+        hierarchical=args$hierarchical,
+        method.inference="permutation",
+        n.resampling = 1e4
+      )
+    }
+  ))
+
+  summary_text <- capture.output(
+    {
+      gpc_summary <- summary(
+        gpc_p,
+        percentage=FALSE
+      )
+    }
   )
-  gpc_summary <- summary(
-    gpc_p,
-    percentage=FALSE
-  )
+  header_list <- assemble_summary(summary_text)
+
   gpc_est <- gpc_summary$table.print
 
-  gpc_b <- BuyseTest::BuyseTest(
-    data=wide_data,
-    treatment=group_var,
-    endpoint=args$endpoint,
-    operator=args$operator,
-    type=args$type,
-    hierarchical=args$hierarchical,
-    method.inference="bootstrap",
-    n.resampling = 1e4
-  )
+  invisible(capture.output(
+    {
+      gpc_u <- BuyseTest::BuyseTest(
+        data=wide_data,
+        treatment=group_var,
+        endpoint=args$endpoint,
+        operator=args$operator,
+        type=args$type,
+        hierarchical=args$hierarchical,
+        method.inference="u-statistic"
+      )
+    }
+  ))
+  
   gpc_ci <- BuyseTest::confint(
-    gpc_b,
+    gpc_u,
     alternative=args$alternative
   )
 
@@ -118,18 +140,21 @@ perform_buyse_test <- function(wide_data, group_var, args) {
       paste0(
         sum(gpc_est$delta),
         " (",
-        round(gpc_ci$lower.ci[rep.m], 4),
+        round(gpc_ci$lower.ci[n], 4),
         "; ", 
-        round(gpc_ci$upper.ci[rep.m], 4),
+        round(gpc_ci$upper.ci[n], 4),
         ")"
       ),
-      gpc_est$p.value[rep.m]
+      gpc_est$p.value[n]
     )
   )
   gpc_final$p.value <- ifelse(
     gpc_final$endpoint == "Total", gpc_final$p.value, "")
 
-  return(gpc_final)
+  return(list(
+    "headers"=header_list,
+    "table"=gpc_final
+  ))
 }
 
 
@@ -139,6 +164,7 @@ perform_buyse_test <- function(wide_data, group_var, args) {
 
 
 gpc_out <- reactiveValues(
+  headers=NULL,
   table=NULL
 )
 
@@ -193,11 +219,21 @@ observe(
 observeEvent(
   input$gpc_action,
   { 
-    gpc_args <- create_buyse_args(input)
-    print(gpc_args)
-    gpc_df <- get_wide_data(input, data())
-    gpc_table <- perform_buyse_test(gpc_df, input$group_var, gpc_args)
-    gpc_out$table <- gpc_table
+    tryCatch(
+      {
+        gpc_args <- create_buyse_args(input)
+        gpc_df <- get_wide_data(input, data())
+        l <- perform_buyse_test(gpc_df, input$group_var, gpc_args)
+        gpc_out$headers <- l$headers
+        gpc_out$table <- l$table
+      },
+      error=function(e) {
+        shinyjs::alert(
+          paste("GPC error:", e$message)
+        )
+        return(NULL)
+      }
+    )
   }
 )
 
@@ -210,11 +246,15 @@ output$gpc_out <- renderUI(
       tags$div(
         fluidRow(column(
           width=12,
-          tags$h3("Results"))
+          tags$h3(gpc_out$headers$title)),
+          tags$p(
+            gpc_out$headers$body,
+            style="margin-left:1.1em;")
         ),
         tags$hr(),
         fluidRow(column(
-          width=12,
+          width=8,
+          offset=2,
           renderTable(
             {
               data.frame(gpc_out$table)
