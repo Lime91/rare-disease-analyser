@@ -26,13 +26,13 @@ create_buyse_args <- function(shiny_input) {
     operator <- rep(">0", n_ep)
   
   # create alternative hypothesis
-  if (shiny_input$gpc_side == 1)  # one-sided test
-    if (shiny_input$gpc_best == 1)
-      alternative <- "less"
-    else
-      alternative <- "greater"
-  else  # two-sided test
-    alternative <- "two.sided"
+  # if (shiny_input$gpc_side == 1)  # one-sided test
+  #   if (shiny_input$gpc_best == 1)
+  #     alternative <- "less"
+  #   else
+  #     alternative <- "greater"
+  # else  # two-sided test
+  #   alternative <- "two.sided"
   
   # currently, only continuous types are supported
   type <- rep("c", n_ep) 
@@ -46,7 +46,7 @@ create_buyse_args <- function(shiny_input) {
   list(
     "endpoint"=endpoint,
     "operator"=operator,
-    "alternative"=alternative,
+    # "alternative"=alternative,
     "type"=type,
     "hierarchical"=hierarchical
   )
@@ -124,10 +124,7 @@ perform_buyse_test <- function(wide_data, group_var, args) {
     }
   ))
   
-  gpc_ci <- BuyseTest::confint(
-    gpc_u,
-    alternative=args$alternative
-  )
+  gpc_ci <- BuyseTest::confint(gpc_u)
 
   gpc_est$neutral <- gpc_est$neutral + gpc_est$uninf
   gpc_final <- rbind(
@@ -208,7 +205,7 @@ observe(
   {
     if (!inputs_disabled()) {
       shinyjs::enable("gpc_prio")
-      shinyjs::enable("gpc_side")
+      # shinyjs::enable("gpc_side")
       shinyjs::enable("gpc_best")
       shinyjs::enable("gpc_action")
     }
