@@ -100,7 +100,6 @@ computeNparLD <- function(shiny_input, period_data) {
           period_data[shiny_input$time_var]
         ),
       ]
-      print(str(period_data))
       nparLD::nparLD(
         form,
         period_data,
