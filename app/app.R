@@ -3,6 +3,8 @@ library(shiny)
 # library(DT)
 # library(shinyjs)
 # library(nparLD)
+library(BuyseTest)  # must be imported as BuyseTest expects the namespace to be loaded
+library(pbapply)  # needed by BuyseTest but not specified in pacakage header
 
 
 options(
