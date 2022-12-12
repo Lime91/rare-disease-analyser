@@ -96,8 +96,8 @@ computeNparLD <- function(shiny_input, period_data) {
       )
       period_data <- period_data[
         order(
-          period_data[shiny_input$subject_var],
-          period_data[shiny_input$time_var]
+          period_data[[shiny_input$subject_var]],
+          period_data[[shiny_input$time_var]]
         ),
       ]
       nparLD::nparLD(
