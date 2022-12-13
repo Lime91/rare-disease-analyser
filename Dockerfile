@@ -1,6 +1,6 @@
 
 # get ubuntu 20.04 (focal) with R=4.1.2 installed
-FROM rocker/r-ver:4.1.2
+FROM rocker/r-ver:4.2.1
 
 # install system dependencies
 RUN apt-get update && \
@@ -9,14 +9,23 @@ RUN apt-get update && \
         libxt6
 
 # install R devtools in order to install specific package versions later
-RUN R -e 'install.packages("devtools")'
+# the 'options' call turns warings into errors to avoid docker building an incomplete image
+RUN R -e 'options(warn = 2); \
+    install.packages("devtools")'
+
+# install an extra dependency for BuyseTest
+RUN R -e 'options(warn = 2); \
+    library(devtools); \
+    install_version("pbapply", "1.5-0")'
 
 # install packages
-RUN R -e 'library(devtools); \
+RUN R -e 'options(warn = 2); \
+    library(devtools); \
     install_version("shiny", "1.7.1"); \
     install_version("shinyjs", "2.1.0"); \
     install_version("DT", "0.21"); \
-    install_version("nparLD", "2.1");'
+    install_version("nparLD", "2.1"); \
+    install_version("BuyseTest", "2.3.11")'
 
 # switch to non-root user (non-daemon users usually start at 1000)
 ARG USERNAME=shiny-user
