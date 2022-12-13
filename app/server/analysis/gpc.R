@@ -25,15 +25,6 @@ create_buyse_args <- function(shiny_input) {
   else # higher values preferred
     operator <- rep(">0", n_ep)
   
-  # create alternative hypothesis
-  # if (shiny_input$gpc_side == 1)  # one-sided test
-  #   if (shiny_input$gpc_best == 1)
-  #     alternative <- "less"
-  #   else
-  #     alternative <- "greater"
-  # else  # two-sided test
-  #   alternative <- "two.sided"
-  
   # currently, only continuous types are supported
   type <- rep("c", n_ep) 
   
@@ -46,7 +37,6 @@ create_buyse_args <- function(shiny_input) {
   list(
     "endpoint"=endpoint,
     "operator"=operator,
-    # "alternative"=alternative,
     "type"=type,
     "hierarchical"=hierarchical
   )
@@ -205,7 +195,6 @@ observe(
   {
     if (!inputs_disabled()) {
       shinyjs::enable("gpc_prio")
-      # shinyjs::enable("gpc_side")
       shinyjs::enable("gpc_best")
       shinyjs::enable("gpc_action")
     }
@@ -250,8 +239,8 @@ output$gpc_out <- renderUI(
         ),
         tags$hr(),
         fluidRow(column(
-          width=8,
-          offset=2,
+          width=10,
+          offset=1,
           renderTable(
             {
               data.frame(gpc_out$table)

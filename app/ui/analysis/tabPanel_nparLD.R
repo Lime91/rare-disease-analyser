@@ -31,41 +31,6 @@ tabPanel(
             uiOutput("nparLD_period")
           )
         ),
-        # tags$hr(),
-        # fluidRow(
-        #   column(
-        #     width=4,
-        #     tags$div(
-        #       shinyjs::disabled(
-        #         radioButtons(
-        #           "nparLD_alpha",
-        #           "Alpha",
-        #           choices=list(
-        #             "1%"=0.01,
-        #             "5%"=0.05,
-        #             "10%"=0.1
-        #           ),
-        #           selected=0.05,
-        #           inline=TRUE
-        #         )
-        #       )
-        #     )
-        #   ),
-        #   column(
-        #     width=2,
-        #     offset=6,
-        #     tags$div(
-        #       shinyjs::disabled(
-        #         actionButton(
-        #           "nparLD_action",
-        #           "Go!",
-        #           class="btn btn-primary"  # bootstrap
-        #         )
-        #       ),
-        #       style="float:right;"
-        #     )
-        #   )
-        # )
         fluidRow(
           column(
             width=2,

@@ -33,23 +33,6 @@ tabPanel(
         ),
         tags$hr(),
         fluidRow(
-          # column(
-          #   width=4,
-          #   tags$div(
-          #     shinyjs::disabled(
-          #       radioButtons(
-          #         "gpc_side",
-          #         "Sidedness",
-          #         choices=list(
-          #           "One-Sided"=1,
-          #           "Two-Sided"=2
-          #         ),
-          #         selected=1,
-          #         inline=FALSE
-          #       )
-          #     )
-          #   )
-          # ),
           column(
             width=4,
             tags$div(

@@ -96,8 +96,8 @@ computeNparLD <- function(shiny_input, period_data) {
       )
       period_data <- period_data[
         order(
-          period_data[shiny_input$subject_var],
-          period_data[shiny_input$time_var]
+          period_data[[shiny_input$subject_var]],
+          period_data[[shiny_input$time_var]]
         ),
       ]
       nparLD::nparLD(
@@ -106,7 +106,6 @@ computeNparLD <- function(shiny_input, period_data) {
         shiny_input$subject_var,
         description=FALSE,
         order.warning=FALSE,
-        # alpha=shiny_input$nparLD_alpha
         alpha=0.05  # this option is broken
       )
     },
@@ -198,7 +197,6 @@ observe(
     if (!inputs_disabled()) {
       shinyjs::enable("nparLD_study_design")
       shinyjs::enable("nparLD_action")
-      # shinyjs::enable("nparLD_alpha")
     }
   }
 )
