@@ -9,7 +9,7 @@ RUN apt-get update && \
         libxt6
 
 # install R devtools in order to install specific package versions later
-# the 'options' call turns warings into errors to avoid docker building an incomplete image
+# 'options(warn = 2)' turns warnings into errors to avoid docker building an incomplete image
 RUN R -e 'options(warn = 2); \
     install.packages("devtools")'
 
@@ -24,7 +24,7 @@ RUN R -e 'options(warn = 2); \
     install_version("shiny", "1.7.1"); \
     install_version("shinyjs", "2.1.0"); \
     install_version("DT", "0.21"); \
-    install_version("nparLD", "2.1"); \
+    install_version("nparLD", "2.2"); \
     install_version("BuyseTest", "2.3.11")'
 
 # switch to non-root user (non-daemon users usually start at 1000)
