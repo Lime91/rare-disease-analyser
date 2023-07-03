@@ -1,12 +1,12 @@
 # Rare Disease Analyser
 
-The Rare Disease Analyzer (RDA) is a `R shiny` webapp that provides statistical methods for longitudinal data with a limited number of subjects. Data with these characteristics is encountered in studies on rare diseases, hence the name of the app. Currently, the set of statistical methods comprises of `nparLD` and selected `GPC` versions.
+The Rare Disease Analyzer (RDA) is a `R shiny` webapp that provides statistical methods for longitudinal data with a limited number of subjects. Data with these characteristics is encountered in studies on rare diseases, hence the name of the app. Currently, the set of statistical methods comprises of `nparLD` and selected `GPC` variants.
 
 The RDA was developed over the course of the [EBStatMax project](https://www.ejprarediseases.org/funded-projects-demonstration-2/), which is a demo project funded by the European Joint Program on Rare Diseases.
 
 ## Install and Run with Docker (recommended)
 
-Assuming you have docker installed on your Linux system, open a terminal, navigate to the repo root, and build an image from the provided Dockerfile with:
+Assuming you have docker installed on your Linux system, open a terminal, navigate to the repo root, and build an image from the provided Docker file with:
 `sudo docker image build -t rare-disease-analyser .`
 
 To run a new container from this image, type:
@@ -29,7 +29,7 @@ Type `library(devtools)` to attach the namespace of the previously installed pac
     install_version("shiny", "1.7.1")
     install_version("shinyjs", "2.1.0")
     install_version("DT", "0.21")
-    install_version("nparLD", "2.1")
+    install_version("nparLD", "2.2")
     install_version("BuyseTest", "2.3.11")
     install_version("pbapply", "1.5-0")  # BuyseTest requirement
 
