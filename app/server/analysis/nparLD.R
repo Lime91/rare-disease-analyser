@@ -149,6 +149,40 @@ splitDataset <- function(shiny_input, full_data) {
 }
 
 
+check_for_na <- function(shiny_input, data) {
+  na_cols <- character(0)
+  if(sum(is.na(data[[shiny_input$group_var]])) > 0) {
+    na_cols <- c(na_cols, shiny_input$group_var)
+  }
+  if(sum(is.na(data[[shiny_input$outcome_var]])) > 0) {
+    na_cols <- c(na_cols, shiny_input$outcome_var)
+  }
+  if(sum(is.na(data[[shiny_input$time_var]])) > 0) {
+    na_cols <- c(na_cols, shiny_input$time_var)
+  }
+  if(sum(is.na(data[[shiny_input$subject_var]])) > 0) {
+    na_cols <- c(na_cols, shiny_input$subject_var)
+  }
+  if (shiny_input$nparLD_period_var %in% colnames(data)) {
+    if(sum(is.na(data[[shiny_input$nparLD_period_var]])) > 0) {
+      na_cols <- c(na_cols, shiny_input$nparLD_period_var)
+    }
+  }
+
+  if (length(na_cols) > 0) {
+    shinyjs::alert(
+      paste(
+        "Cannot compute nparLD as the following columns contain NA values:",
+        paste(na_cols, collapse=", ")
+      )
+    )
+    return(TRUE)
+  } else {
+    return(FALSE)
+  } 
+}
+
+
 ################################
 #### SERVER LOGIC
 ################################
@@ -204,20 +238,28 @@ observe(
 
 observeEvent(
   input$nparLD_action,
-  {
-    if (input$nparLD_study_design == 1) {
-      nparLD_out$cross_over <- FALSE
-      nparLD_out$value_1 <- computeNparLD(input, data())
+  { 
+    if(check_for_na(input, data())) {
+      nparLD_out$value_1 <- NULL
       nparLD_out$value_2 <- NULL
       nparLD_out$name_1 <- NULL
       nparLD_out$name_2 <- NULL
-    } else {
-      nparLD_out$cross_over <- TRUE
-      data_split <- splitDataset(input, data())
-      nparLD_out$value_1 <- computeNparLD(input, data_split[[1]])
-      nparLD_out$value_2 <- computeNparLD(input, data_split[[2]])
-      nparLD_out$name_1 <- names(data_split)[1]
-      nparLD_out$name_2 <- names(data_split)[2]
+    }
+    else {
+      if (input$nparLD_study_design == 1) {
+        nparLD_out$cross_over <- FALSE
+        nparLD_out$value_1 <- computeNparLD(input, data())
+        nparLD_out$value_2 <- NULL
+        nparLD_out$name_1 <- NULL
+        nparLD_out$name_2 <- NULL
+      } else {
+        nparLD_out$cross_over <- TRUE
+        data_split <- splitDataset(input, data())
+        nparLD_out$value_1 <- computeNparLD(input, data_split[[1]])
+        nparLD_out$value_2 <- computeNparLD(input, data_split[[2]])
+        nparLD_out$name_1 <- names(data_split)[1]
+        nparLD_out$name_2 <- names(data_split)[2]
+      }
     }
   }
 )
@@ -226,8 +268,11 @@ observeEvent(
 output$nparLD_out <- renderUI(
   {
     if (is.null(nparLD_out$cross_over))
-      tags$div(id="nparLD_out_placeholder")
+      return(tags$div(id="nparLD_out_placeholder"))
     else if (nparLD_out$cross_over) {  # cross over
+
+      if (is.null(nparLD_out$value_1) || is.null(nparLD_out$value_2))
+        return(tags$div(id="nparLD_out_placeholder"))
 
       # period 1 renderings
       output$nparLD_rte_plot_1 <- render_nparLD_plot(nparLD_out$value_1)
@@ -248,6 +293,9 @@ output$nparLD_out <- renderUI(
       )
 
     } else {  # single period
+
+      if (is.null(nparLD_out$value_1))
+        return(tags$div(id="nparLD_out_placeholder"))
 
       output$nparLD_rte_plot <- render_nparLD_plot(nparLD_out$value_1)
       output$nparLD_table_content <- render_nparLD_table(nparLD_out$value_1)
